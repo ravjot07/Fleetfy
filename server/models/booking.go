@@ -5,6 +5,7 @@ import (
     "errors"
     "time"
 	"log"
+   
 )
 
 type Booking struct {
@@ -37,17 +38,26 @@ func CreateBooking(db *sql.DB, userID int, pickupLocation, dropoffLocation, vehi
 }
 
 func AcceptBooking(db *sql.DB, driverID, bookingID int) error {
-    // Assign booking to driver and update status
-    query := `UPDATE bookings SET driver_id=$1, status='accepted' WHERE id=$2 AND status='pending'`
+    // SQL to update the booking to accepted, checking if it is still pending
+    query := `UPDATE bookings 
+              SET driver_id = $1, status = 'accepted' 
+              WHERE id = $2 AND status = 'pending'`
+
     result, err := db.Exec(query, driverID, bookingID)
     if err != nil {
         return err
     }
 
     rowsAffected, err := result.RowsAffected()
-    if err != nil || rowsAffected == 0 {
-        return errors.New("Booking not available or already accepted")
+    if err != nil {
+        return err
+    }
+
+    if rowsAffected == 0 {
+        return errors.New("booking not available or already accepted")
     }
 
     return nil
 }
+
+
