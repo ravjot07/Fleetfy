@@ -1,0 +1,53 @@
+package main
+
+import (
+    "fmc/database"
+    "fmc/handler"
+    "fmc/middleware"
+    "log"
+    "net/http"
+
+    "github.com/gorilla/mux"
+    "github.com/gorilla/handlers"
+)
+
+func main() {
+    // Initialize the database
+    database.InitDB()
+    db := database.DB
+
+    // Initialize the router
+    r := mux.NewRouter()
+
+    // Apply global CORS middleware
+    r.Use(middleware.CORS)
+
+    // Authentication routes (User registration and login)
+    r.HandleFunc("/register", handler.RegisterHandler(db)).Methods("POST")
+    r.HandleFunc("/login", handler.LoginHandler(db)).Methods("POST")
+
+    // Protected routes for Admin
+    adminRouter := r.PathPrefix("/admin").Subrouter()
+    adminRouter.Use(middleware.RoleMiddleware("admin"))  // Protect with admin role middleware
+    adminRouter.HandleFunc("/getVehicles", handler.GetAllVehiclesHandler(db)).Methods("GET")  // Admin gets all vehicles
+	adminRouter.HandleFunc("/vehicles", handler.CreateVehicleHandler(db)).Methods("POST")  // Admin creates a vehicle
+
+
+    // Routes for Users to book vehicles
+    userRouter := r.PathPrefix("/user").Subrouter()
+    userRouter.Use(middleware.RoleMiddleware("user"))  // Protect with user role middleware
+    userRouter.HandleFunc("/bookings", handler.CreateBookingHandler(db)).Methods("POST")  // Create a booking
+
+    // Routes for Drivers to accept bookings
+    driverRouter := r.PathPrefix("/driver").Subrouter()
+    driverRouter.Use(middleware.RoleMiddleware("driver"))  // Protect with driver role middleware
+    driverRouter.HandleFunc("/bookings/{id}/accept", handler.AcceptBookingHandler(db)).Methods("PUT")  // Driver accepts booking
+
+    // Add CORS support for frontend
+    headers := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "User-ID", "Role"})
+    methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+    origins := handlers.AllowedOrigins([]string{"http://localhost:5173"}) // Allow Vite dev server requests
+
+    log.Println("Server is running on port 8080...")
+    log.Fatal(http.ListenAndServe(":8080", handlers.CORS(origins, headers, methods)(r)))
+}
