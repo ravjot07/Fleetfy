@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]); // List of all bookings
-  const [activeBookings, setActiveBookings] = useState([]); // Number of active bookings for each driver
+  const [activeBookings, setActiveBookings] = useState([]); // Active bookings for each driver
   const [message, setMessage] = useState('');
 
   // Fetch all bookings
   const fetchAllBookings = async () => {
-    const role = localStorage.getItem('role'); 
+    const role = localStorage.getItem('role');
     try {
       const response = await fetch('http://localhost:8080/admin/bookings', {
         method: 'GET',
@@ -29,9 +29,9 @@ const AdminDashboard = () => {
     }
   };
 
-  // Fetch active bookings count for each driver
+  // Fetch active bookings list for each driver
   const fetchActiveBookings = async () => {
-    const role = localStorage.getItem('role'); 
+    const role = localStorage.getItem('role');
     try {
       const response = await fetch('http://localhost:8080/admin/drivers/active-bookings', {
         method: 'GET',
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
 
   // Mark a booking as complete
   const markBookingComplete = async (bookingId) => {
-    const role = localStorage.getItem('role'); 
+    const role = localStorage.getItem('role');
     try {
       const response = await fetch(`http://localhost:8080/admin/bookings/${bookingId}/complete`, {
         method: 'PUT',
@@ -85,7 +85,7 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4" >
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
       {message && <p className="text-red-500 mb-4">{message}</p>}
@@ -141,14 +141,22 @@ const AdminDashboard = () => {
           <thead>
             <tr>
               <th className="border px-4 py-2">Driver ID</th>
-              <th className="border px-4 py-2">Active Bookings</th>
+              <th className="border px-4 py-2">Active Booking IDs</th>
             </tr>
           </thead>
           <tbody>
             {activeBookings.map((driver) => (
               <tr key={driver.driver_id}>
                 <td className="border px-4 py-2">{driver.driver_id}</td>
-                <td className="border px-4 py-2">{driver.active_bookings_count}</td>
+                <td className="border px-4 py-2">
+                  {Array.isArray(driver.active_bookings) && driver.active_bookings.length > 0 ? (
+                    driver.active_bookings.map((bookingId) => (
+                      <span key={bookingId} className="inline-block mr-2">{bookingId}</span>
+                    ))
+                  ) : (
+                    <span>No active bookings</span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

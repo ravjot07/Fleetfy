@@ -27,7 +27,16 @@ function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+    <section className="bg-gray-50 dark:bg-gray-900">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+          <img
+            className="w-16 h-16 mr-2"
+            src="\logo.png"
+            alt="logo"
+          />
+           Fleetfy
+        </a>      
       <form
         onSubmit={handleRegister}
         className="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700"
@@ -66,6 +75,9 @@ function Register() {
         {message && <p className="mt-4 text-red-600 dark:text-red-400">{message}</p>}
       </form>
     </div>
+    
+    </section>
+    
   );
 }
 
