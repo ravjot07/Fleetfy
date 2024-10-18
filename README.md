@@ -2,7 +2,7 @@
 # **Fleetfy - Fleet Management and Logistics Platform**
 
 Fleetfy is a web-based logistics and fleet management application. It connects users who need transportation services with drivers, while allowing administrators to manage the fleet of vehicles, monitor driver activity, and oversee bookings. The app provides real-time tracking, vehicle assignment, and role-based access control for users, drivers, and admins.
-## **## Important Links**
+## **Important Links**
 -   [Application Documentation](https://www.notion.so/Fleetfy-Documentation-1239888512ac81ccb81de7ac839dd3a0)
 -   [Server Design and Performance Documentation]()
 -   [Database Design Document](https://www.notion.so/Database-Design-1239888512ac80bbb82beba69c466861)
