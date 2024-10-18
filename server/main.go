@@ -6,6 +6,7 @@ import (
     "fmc/middleware"
     "log"
     "net/http"
+    "os"
 
     "github.com/gorilla/mux"
     "github.com/gorilla/handlers"
@@ -55,6 +56,11 @@ func main() {
     methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
     origins := handlers.AllowedOrigins([]string{"http://localhost:5173"}) // Allow Vite dev server requests
 
-    log.Println("Server is running on port 8080...")
-    log.Fatal(http.ListenAndServe(":8080", handlers.CORS(origins, headers, methods)(r)))
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+
+    log.Printf("Server is running on port %s...", port)
+    log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(origins, headers, methods)(r)))
 }
