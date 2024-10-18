@@ -4,9 +4,10 @@
 Fleetfy is a web-based logistics and fleet management application. It connects users who need transportation services with drivers, while allowing administrators to manage the fleet of vehicles, monitor driver activity, and oversee bookings. The app provides real-time tracking, vehicle assignment, and role-based access control for users, drivers, and admins.
 ## **Important Links**
 -   [Application Documentation](https://www.notion.so/Fleetfy-Documentation-1239888512ac81ccb81de7ac839dd3a0)
--   [Server Design and Performance Documentation]()
+-   [Server Design and Performance Documentation](https://vaulted-hamster-fc2.notion.site/Fleetfy-Server-Implementation-and-Performance-Documentation-1239888512ac8003b8c8cb8b76816f9b)
 -   [Database Design Document](https://www.notion.so/Database-Design-1239888512ac80bbb82beba69c466861)
 -   [ER Digram](https://www.notion.so/ER-Diagram-of-our-Database-1239888512ac8093bc07dc0378e79f62)
+-   [Future Scope for Fleetfy](https://vaulted-hamster-fc2.notion.site/Future-Scope-for-Fleetfy-1239888512ac805680dcfb16f5f73975)
 -   [Application Demo Video](https://drive.google.com/file/d/1lkj6W9nGF8htwURhecloZb3yHBhUoH4v/view?usp=sharing)
 
 ## **Table of Contents**
