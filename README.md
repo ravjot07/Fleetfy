@@ -7,7 +7,7 @@ Fleetfy is a web-based logistics and fleet management application. It connects u
 -   [Server Design and Performance Documentation]()
 -   [Database Design Document](https://www.notion.so/Database-Design-1239888512ac80bbb82beba69c466861)
 -   [ER Digram](https://www.notion.so/ER-Diagram-of-our-Database-1239888512ac8093bc07dc0378e79f62)
--   [Application Demo Video]()
+-   [Application Demo Video](https://drive.google.com/file/d/1lkj6W9nGF8htwURhecloZb3yHBhUoH4v/view?usp=sharing)
 
 ## **Table of Contents**
 
