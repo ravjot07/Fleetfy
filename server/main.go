@@ -31,6 +31,9 @@ func main() {
     adminRouter.Use(middleware.RoleMiddleware("admin"))  // Protect with admin role middleware
     adminRouter.HandleFunc("/getVehicles", handler.GetAllVehiclesHandler(db)).Methods("GET")  // Admin gets all vehicles
 	adminRouter.HandleFunc("/vehicles", handler.CreateVehicleHandler(db)).Methods("POST")  // Admin creates a vehicle
+    adminRouter.HandleFunc("/bookings", handler.GetAllBookingsHandler(db)).Methods("GET")  // Get all bookings
+    adminRouter.HandleFunc("/bookings/{id}/complete", handler.CompleteBookingHandler(db)).Methods("PUT")  // Mark a booking as complete
+    adminRouter.HandleFunc("/drivers/active-bookings", handler.GetDriverActiveBookingsCount(db)).Methods("GET")  // Get active bookings count per driver
 
     // adminRouter.HandleFunc("/bookings/pending", handler.GetPendingBookingsHandler(db)).Methods("GET")
     // adminRouter.Use(middleware.RoleMiddleware("admin", "driver"))  // Allow both 'admin' and 'driver'
