@@ -6,6 +6,7 @@ import (
     "net/http"
 	"log"
     "github.com/gorilla/mux"
+    "time"
     
     "fmc/models"
 )
@@ -160,5 +161,133 @@ func GetDriverActiveBookingsCount(db *sql.DB) http.HandlerFunc {
 
         w.Header().Set("Content-Type", "application/json")
         json.NewEncoder(w).Encode(driverBookings)
+    }
+}
+
+type VehicleStatus struct {
+    Active int `json:"active"`
+    Idle   int `json:"idle"`
+}
+
+func GetVehicleStatus(db *sql.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        var status VehicleStatus
+
+        // Count active vehicles (in use)
+        err := db.QueryRow(`SELECT COUNT(*) FROM vehicles WHERE availability = FALSE`).Scan(&status.Active)
+        if err != nil {
+            http.Error(w, "Error fetching active vehicles", http.StatusInternalServerError)
+            return
+        }
+
+        // Count idle vehicles (available)
+        err = db.QueryRow(`SELECT COUNT(*) FROM vehicles WHERE availability = TRUE`).Scan(&status.Idle)
+        if err != nil {
+            http.Error(w, "Error fetching idle vehicles", http.StatusInternalServerError)
+            return
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(status)
+    }
+}
+type DriverPerformance struct {
+    DriverName   string `json:"driver_name"`
+    Deliveries   int    `json:"deliveries"`
+}
+
+func GetDriverPerformance(db *sql.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        rows, err := db.Query(`
+            SELECT drivers.name, COUNT(bookings.id) 
+            FROM drivers 
+            JOIN bookings ON drivers.id = bookings.driver_id
+            WHERE bookings.status = 'completed'
+            GROUP BY drivers.name
+        `)
+        if err != nil {
+            http.Error(w, "Error fetching driver performance", http.StatusInternalServerError)
+            return
+        }
+        defer rows.Close()
+
+        var data []DriverPerformance
+        for rows.Next() {
+            var performance DriverPerformance
+            if err := rows.Scan(&performance.DriverName, &performance.Deliveries); err != nil {
+                http.Error(w, "Error processing data", http.StatusInternalServerError)
+                return
+            }
+            data = append(data, performance)
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(data)
+    }
+}
+type RevenueData struct {
+    Date    time.Time `json:"date"`
+    Revenue float64   `json:"revenue"`
+}
+
+func GetRevenueOverTime(db *sql.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        rows, err := db.Query(`
+            SELECT date_trunc('day', created_at) AS day, SUM(estimated_cost) 
+            FROM bookings 
+            WHERE status = 'completed' 
+            GROUP BY day
+            ORDER BY day
+        `)
+        if err != nil {
+            http.Error(w, "Error fetching revenue data", http.StatusInternalServerError)
+            return
+        }
+        defer rows.Close()
+
+        var data []RevenueData
+        for rows.Next() {
+            var revenue RevenueData
+            if err := rows.Scan(&revenue.Date, &revenue.Revenue); err != nil {
+                http.Error(w, "Error processing data", http.StatusInternalServerError)
+                return
+            }
+            data = append(data, revenue)
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(data)
+    }
+}
+type BookingStatus struct {
+    Status string `json:"status"`
+    Count  int    `json:"count"`
+}
+
+func GetBookingStatusDistribution(db *sql.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        rows, err := db.Query(`
+            SELECT status, COUNT(*) 
+            FROM bookings 
+            GROUP BY status
+        `)
+        if err != nil {
+            http.Error(w, "Error fetching booking statuses", http.StatusInternalServerError)
+            return
+        }
+        defer rows.Close()
+
+        var data []BookingStatus
+        for rows.Next() {
+            var status BookingStatus
+            if err := rows.Scan(&status.Status, &status.Count); err != nil {
+                http.Error(w, "Error processing data", http.StatusInternalServerError)
+                return
+            }
+            data = append(data, status)
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(data)
     }
 }

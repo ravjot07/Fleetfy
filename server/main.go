@@ -35,7 +35,11 @@ func main() {
     adminRouter.HandleFunc("/bookings", handler.GetAllBookingsHandler(db)).Methods("GET")  // Get all bookings
     adminRouter.HandleFunc("/bookings/{id}/complete", handler.CompleteBookingHandler(db)).Methods("PUT")  // Mark a booking as complete
     adminRouter.HandleFunc("/drivers/active-bookings", handler.GetDriverActiveBookingsCount(db)).Methods("GET")  // Get active bookings count per driver
-
+    adminRouter.HandleFunc("/analytics/vehicle-status", handler.GetVehicleStatus(db)).Methods("GET")
+    adminRouter.HandleFunc("/analytics/driver-performance", handler.GetDriverPerformance(db)).Methods("GET")
+    adminRouter.HandleFunc("/analytics/revenue-over-time", handler.GetRevenueOverTime(db)).Methods("GET")
+    adminRouter.HandleFunc("/analytics/booking-status-distribution", handler.GetBookingStatusDistribution(db)).Methods("GET")
+    adminRouter.HandleFunc("/analytics/bookings-over-time", handler.GetBookingsOverTime(db)).Methods("GET")
     // adminRouter.HandleFunc("/bookings/pending", handler.GetPendingBookingsHandler(db)).Methods("GET")
     // adminRouter.Use(middleware.RoleMiddleware("admin", "driver"))  // Allow both 'admin' and 'driver'
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Analytics from '../components/Analytics';
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]); // List of all bookings
@@ -86,8 +87,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="container mx-auto p-4" >
+      
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-
+      <Analytics />
       {message && <p className="text-red-500 mb-4">{message}</p>}
 
       <h2 className="text-2xl mb-4">All Bookings</h2>

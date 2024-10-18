@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
     "net/http"
     "log"
+    "time"
 	
 )
 
@@ -147,5 +148,42 @@ func GetPendingBookingsHandler(db *sql.DB) http.HandlerFunc {
 
         w.Header().Set("Content-Type", "application/json")
         json.NewEncoder(w).Encode(bookings)
+    }
+}
+
+type BookingsOverTime struct {
+    Date  time.Time `json:"date"`
+    Count int       `json:"count"`
+}
+
+// GetBookingsOverTime fetches the number of bookings created over the past 7 days
+func GetBookingsOverTime(db *sql.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        // Query to fetch booking counts per day for the last 7 days
+        rows, err := db.Query(`
+            SELECT date_trunc('day', created_at) AS day, COUNT(*) 
+            FROM bookings 
+            WHERE created_at >= NOW() - INTERVAL '7 days'
+            GROUP BY day
+            ORDER BY day
+        `)
+        if err != nil {
+            http.Error(w, "Error fetching data", http.StatusInternalServerError)
+            return
+        }
+        defer rows.Close()
+
+        var data []BookingsOverTime
+        for rows.Next() {
+            var booking BookingsOverTime
+            if err := rows.Scan(&booking.Date, &booking.Count); err != nil {
+                http.Error(w, "Error processing data", http.StatusInternalServerError)
+                return
+            }
+            data = append(data, booking)
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(data)
     }
 }
