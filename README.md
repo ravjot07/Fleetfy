@@ -24,7 +24,7 @@ Fleetfy is a web-based logistics and fleet management application. It connects u
 -   **Go (Golang)**: High-performance, statically typed backend.
 -   **PostgreSQL**: Relational database for storing users, bookings, vehicles, and drivers.
 -   **Gorilla Mux**: Router used for managing API endpoints.
--   **Docker**: For containerization and easy deployment.
+
 
 ### **Frontend**:
 
